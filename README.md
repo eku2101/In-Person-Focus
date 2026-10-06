@@ -9,6 +9,20 @@ The starting observation is that repeatedly checking a phone during an in-person
 - **README.md** (this document): project overview, instructions, and implementation guide.
 - **[Design.md](Design.md)**: the question, design decisions, and how the phenomenon is represented in code.
 - **[Learningnotes.md](Learningnotes.md)**: documented revisions, the role of AI assistance, limitations, and questions for further reflection.
+- **[ConversationRecord.md](ConversationRecord.md)**: an edited chronological record of project conversations and approved changes, not a verbatim chat export.
+
+## Latest improvements — October 6, 2026
+
+The creator reviewed and approved these refinements before implementation:
+
+- **Compare the same notifications:** see Focus off and Focus on results using the same four messages and current settings.
+- **Keep consequences visible:** test controls sit beside the conversation indicators and notification results; the indicators stay visible while scrolling results when screen height allows.
+- **Clarify blocking:** **BLOCKED · Held for later** explains that postponed messages are not deleted.
+- **Separate interruption from response:** attention totals distinguish alert delivery, deliberately opening messages, and reconnecting.
+- **Reflect on one real-world choice:** a brief question asks which notifications the user would let wait during their next conversation.
+- **Keep personalization secondary:** profile pictures remain optional in a collapsed section.
+
+These changes support the project's essential sequence: notification → priority decision → response → possible conversation effect. They encourage awareness and experimentation, not a claim of proven habit change. The design discussion and adjustments are preserved in the linked project documents.
 
 For a quick demonstration, reset the app, leave Focus off, and send two TikTok notifications. Attention falls from 100% to 70%, and mood becomes Distracted. Reset again, turn Focus on with TikTok blocked, and send the same two notifications: attention remains at 100% and mood stays Positive. Then send a message from selected contact Mom: it is allowed, and attention falls to 95%. These outcomes follow the programmed rules; they are not experimental evidence about real conversations.
 
@@ -21,8 +35,10 @@ Double-click `index.html` to open it in a modern browser. No installation, inter
 3. Select a fictional notification and click **Send test**.
 4. Read its **ALLOWED / BLOCKED** result and watch Attention and Conversation Mood.
 5. Open or dismiss a message, try other settings, or take a moment to reconnect.
+6. Click **Compare Focus off and on** to explore the same four notifications in a separate comparison.
+7. Write one intention under **Which notifications would you let wait?** Copy it into your own notes if you want to keep it.
 
-Turning Focus off releases waiting messages as one batch. **Reset demo** restores initial settings, 100% attention, Positive mood, and clears messages and profile pictures.
+Turning Focus off releases waiting messages as one batch. **Reset demo** restores initial settings, 100% attention, Positive mood, and clears messages, profile pictures, comparison results, and the reflection field.
 
 ## How filtering works
 
@@ -34,7 +50,7 @@ Turning Focus off releases waiting messages as one batch. **Reset demo** restore
 | Checked low-priority category   | Blocked        | Allowed   |
 | Unchecked low-priority category | Allowed        | Allowed   |
 
-BLOCKED means held quietly under **Waiting for later**, not deleted. Changing settings affects new arrivals. You can deliberately open a held message, which costs attention. Emergency status is part of the fictional sample data; the app does not detect real emergencies.
+BLOCKED means held quietly under **Held for later**, not deleted. Changing settings affects new arrivals. You can deliberately open a held message, which costs attention. Emergency status is part of the fictional sample data; the app does not detect real emergencies.
 
 ## Understand and edit the code
 
@@ -73,7 +89,7 @@ Blocking prevents further loss; it does not automatically restore attention. The
 
 ## Pictures and privacy
 
-**Sync profile pictures** lets you choose a PNG, JPG, or WebP up to 5 MB per contact. The picture updates that contact's card and existing/future notifications in this tab. This is local visual syncing, not integration with real contacts or accounts.
+**Optional: personalize profile pictures** lets you choose a PNG, JPG, or WebP up to 5 MB per contact. The picture updates that contact's card and existing/future notifications in this tab. This is local visual syncing, not integration with real contacts or accounts.
 
 Messages, settings, attention, and pictures stay in JavaScript memory. There is no database, login, external API, backend, analytics, or stored simulation data. A welcome explanation appears on every page load before you enter the prototype. No localStorage is used. Pictures are local object URLs, never uploaded. Reloading or resetting clears the session. No external fonts, scripts, or images are required.
 
