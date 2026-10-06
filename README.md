@@ -104,3 +104,71 @@ The **What changes with Focus?** comparison runs TikTok, Mom, Instagram, and an 
 Live indicators distinguish attention used by alert delivery from attention used by opening messages. The totals account for clamping at 0 and 100. **BLOCKED · Held for later** means a message is postponed, not deleted. Optional profile pictures stay collapsed by default. A reflection field asks which notifications you would let wait in your next conversation; it stays in this tab only and is cleared by Reset demo or reload.
 
 See [ConversationRecord.md](ConversationRecord.md) for the chronological project discussion record, including decomposition, repeated patterns, abstraction, and the approved changes. It is an edited record of the available conversation, not a verbatim platform export.
+
+## Feedback on the abstraction: representation, state, and interaction
+
+This AI-assisted design feedback was added at the creator's request on October 6, 2026. It evaluates the existing model; it does not introduce new application behavior.
+
+The breakdown works well because it connects a familiar experience—checking a phone during a conversation—to a sequence the user can explore:
+
+**Notification arrives → filter makes a decision → user responds → conversation state changes.**
+
+The main weakness is that real attention and emotions are more complex than a score. The app presents those values as a way to explore assumptions rather than measure people.
+
+### Representation: What stands for the real phenomenon?
+
+A notification can be represented as a JavaScript object:
+
+```js
+const notification = {
+  sender: "Mom",
+  category: "contact",
+  text: "Can you call me when you have a moment?"
+};
+```
+
+This captures information used in a filtering decision while leaving out details such as the relationship, tone, and conversation topic.
+
+That simplification is useful, but it reveals an important limitation: **an important person does not necessarily send an urgent message, and a normally low-priority source can sometimes send something important.** The explicit emergency category begins to address that distinction, but the prototype does not interpret real messages or infer urgency.
+
+The Attention bar represents divided attention, while Conversation Mood represents a possible social consequence. Mood is currently derived directly from attention, so the two indicators show different interpretations of the same underlying value—not two independent measurements.
+
+### State: What changes or stays the same?
+
+The app uses JavaScript variables to describe the current situation:
+
+| State | Meaning |
+| --- | --- |
+| `active` | Whether Focus filtering applies |
+| `selected` | Which contacts can interrupt |
+| `blockedTypes` | Which notification categories should wait |
+| `attention` | The illustrative attention score |
+| `conversationMood` | A mood label derived from that score |
+| `delivered` / `delayed` | Messages that appeared or were held |
+
+Separating **preferences** from **consequences** is a strength. Changing a category setting affects future notifications; it does not undo attention already lost.
+
+The code follows this pattern:
+
+```text
+Current state + an event → updated state → updated screen
+```
+
+For example, receiving a blocked TikTok notification adds it to the waiting queue while leaving attention unchanged. Opening that held message later costs attention because the user has deliberately shifted their focus.
+
+### Interaction: What can the user discover by acting?
+
+The most meaningful interactions are choosing priorities, testing notifications, opening or dismissing messages, and comparing Focus off with Focus on.
+
+The distinction between **an alert arriving** and **choosing to open it** is especially valuable. It represents two separate moments:
+
+1. The system draws attention.
+2. The person decides whether to engage further.
+
+The comparison makes the programmed consequences easy to see. However, better results with Focus on are built into the rules; they do not prove that filtering improves real conversations.
+
+One abstraction to discuss critically is the reconnect button. It makes recovery visible, but real attention does not return by a fixed amount after a click. Similarly, dismissing a notification currently costs nothing, although doing so might still require looking away.
+
+### Overall feedback
+
+Keep the model simple and explain its assumptions openly. Its value is helping someone ask, **“Which interruptions are worth my attention?”** rather than claiming to calculate how present they really are.
