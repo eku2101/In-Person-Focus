@@ -10,15 +10,15 @@ The initial version compared immediate and intentional delivery during a timed c
 
 ## Revisions and what they revealed
 
-| Revision | Reason or insight |
-| --- | --- |
-| Added important contacts and emergency priority | Staying present should still allow communication the user considers important. |
-| Added configurable low-priority categories | Personalization needs choices beyond a single on/off switch. |
-| Added explicit ALLOWED / BLOCKED results | The relationship between a setting and an outcome should be visible. |
-| Added attention and mood indicators | The original social observation needed a visual representation in the simulation. |
-| Added Open and Dismiss actions | Users should be able to explore how their own responses affect the modeled conversation. |
-| Kept contacts editable when Focus is off | Disabled controls were mistaken for broken controls during development. |
-| Formatted and commented the source | The project should be understandable and modifiable by its creator. |
+| Revision                                        | Reason or insight                                                                        |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Added important contacts and emergency priority | Staying present should still allow communication the user considers important.           |
+| Added configurable low-priority categories      | Personalization needs choices beyond a single on/off switch.                             |
+| Added explicit ALLOWED / BLOCKED results        | The relationship between a setting and an outcome should be visible.                     |
+| Added attention and mood indicators             | The original social observation needed a visual representation in the simulation.        |
+| Added Open and Dismiss actions                  | Users should be able to explore how their own responses affect the modeled conversation. |
+| Kept contacts editable when Focus is off        | Disabled controls were mistaken for broken controls during development.                  |
+| Formatted and commented the source              | The project should be understandable and modifiable by its creator.                      |
 
 ## What the code makes explicit
 
@@ -58,3 +58,17 @@ The creator can add their own answers before submitting:
 3. What did I change after trying the prototype myself?
 4. What did AI help me do, and which generated choices did I question or revise?
 5. What would I change after feedback from my professor or classmates?
+
+## Computational thinking discussion — October 6, 2026
+
+**Decomposition:** We separated the phenomenon into a trigger, a judgment about importance, a response, an attention shift, a possible conversation effect, and a deliberate return to the conversation. This connects each part of the social observation to something the prototype can represent.
+
+**Patterns:** We discussed notification → checking → interruption, concern about missing important communication, repeated small distractions, planning before reacting, feedback → adjustment → another attempt, and returning after distraction. These are possible patterns to explore, not universal statements about human behavior.
+
+**Likely use:** A 5–10 minute session was suggested as a design estimate: brief setup, several comparisons, and reflection. No usage study supports that estimate. The prototype's purpose is awareness and practice, not prolonged engagement or proven daily habit change.
+
+**Abstraction:** The essential sequence is a notification, a priority decision, a response, and a possible conversation effect. Optional personalization should support that sequence without dominating it.
+
+The creator explicitly asked to review ideas before implementation. Six proposals were presented without changing files; the creator then approved them. Their implementation adds a separate comparison, clearer held-message language, visible attention costs, and a reflection prompt. This is another example of the creator directing and evaluating AI-assisted work.
+
+The discussion is preserved in [ConversationRecord.md](ConversationRecord.md). The reflection field in the app is not saved to this repository.

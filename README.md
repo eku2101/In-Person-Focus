@@ -80,3 +80,11 @@ Messages, settings, attention, and pictures stay in JavaScript memory. There is 
 ## Optional developer checks
 
 `test.cjs` contains regression checks. If Node.js is already installed, run `node test.cjs`. This file is not loaded by the application and Node.js is not needed to use the prototype.
+
+## Compare, notice, and reflect
+
+The **What changes with Focus?** comparison runs TikTok, Mom, Instagram, and an emergency through the same filter twice: Focus off and Focus on. Both start at 100%, use your current settings, and contain no opening actions. With default settings the results are 60% / Distracted and 90% / Positive. Changing settings marks existing results as outdated until you compare again. This separate exercise does not alter your live messages or attention score.
+
+Live indicators distinguish attention used by alert delivery from attention used by opening messages. The totals account for clamping at 0 and 100. **BLOCKED · Held for later** means a message is postponed, not deleted. Optional profile pictures stay collapsed by default. A reflection field asks which notifications you would let wait in your next conversation; it stays in this tab only and is cleared by Reset demo or reload.
+
+See [ConversationRecord.md](ConversationRecord.md) for the chronological project discussion record, including decomposition, repeated patterns, abstraction, and the approved changes. It is an edited record of the available conversation, not a verbatim platform export.

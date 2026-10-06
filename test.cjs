@@ -127,3 +127,61 @@ click("welcome-start");
 assert.equal(get("welcome").open, false);
 click("about-prototype");
 assert.equal(get("welcome").open, true);
+
+// Comparison uses the live filtering rules but must not mutate the experiment.
+click("reset");
+send("mom");
+const liveScore = get("attention").value;
+const liveCount = get("delivered-count").textContent;
+const off = vm.runInContext(
+  "simulateSequence(false, selected, blockedTypes)",
+  context,
+);
+const on = vm.runInContext(
+  "simulateSequence(true, selected, blockedTypes)",
+  context,
+);
+assert.equal(off.score, 60);
+assert.equal(off.mood, "Distracted");
+assert.equal(on.score, 90);
+assert.equal(on.mood, "Positive");
+assert.equal(on.rows[0].allowed, false);
+assert.equal(on.rows[3].allowed, true);
+click("compare");
+assert.equal(get("comparison-results").children.length, 2);
+assert.equal(get("comparison-results").hidden, false);
+assert.equal(get("attention").value, liveScore);
+assert.equal(get("delivered-count").textContent, liveCount);
+inputs[0].checked = false;
+inputs[0].listeners.change();
+assert.match(get("comparison-status").textContent, /Settings changed/);
+assert.equal(
+  vm.runInContext(
+    "simulateSequence(true, selected, blockedTypes).score",
+    context,
+  ),
+  95,
+);
+vm.runInContext("blockedTypes.clear()", context);
+assert.equal(
+  vm.runInContext(
+    "simulateSequence(true, selected, blockedTypes).score",
+    context,
+  ),
+  65,
+);
+click("reset");
+send("tiktok");
+assert.match(get("attention-breakdown").textContent, /Alert delivery: −15/);
+vm.runInContext("interact(delivered[0], 'open')", context);
+assert.match(get("attention-breakdown").textContent, /Opening messages: −5/);
+click("reconnect");
+assert.match(get("attention-breakdown").textContent, /Reconnecting: \+10/);
+get("reflection-note").value = "Let social updates wait.";
+click("reset");
+assert.equal(get("reflection-note").value, "");
+assert.equal(get("comparison-results").hidden, true);
+assert.match(get("attention-breakdown").textContent, /Alert delivery: −0/);
+console.log(
+  "PASS: comparison scores, emergency override, state isolation, changed settings notice, attention breakdown, and reflection reset.",
+);

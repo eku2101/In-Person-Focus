@@ -77,7 +77,7 @@
             >
           </fieldset>
           <details class="photo-settings">
-            <summary>Sync profile pictures</summary>
+            <summary>Optional: personalize profile pictures</summary>
             <p>
               Choose a picture for each contact. It updates their card and every
               notification in this demo. Pictures stay in this tab only.
@@ -142,7 +142,12 @@
               be blocked.</small
             >
           </fieldset>
-          <section class="simulator">
+        </section>
+        <aside
+          class="preview"
+          aria-label="Try notifications and see conversation effects"
+        >
+          <section class="simulator" aria-label="Test a notification">
             <div class="section-heading">
               <span class="eyebrow">TRY YOUR FILTER</span
               ><button id="reset" class="text-button">Reset demo</button>
@@ -171,12 +176,10 @@
               No real messages are sent. Try a notification to see what happens.
             </p>
           </section>
-        </section>
-        <aside class="preview" aria-label="Simulated phone preview">
-          <div class="preview-heading">
-            <span class="eyebrow">YOUR PHONE, WITH A LITTLE MORE QUIET</span>
-          </div>
           <section class="conversation" aria-label="Conversation state">
+            <p class="model-label">
+              Illustrative conversation state · not a measurement
+            </p>
             <div>
               <span>Conversation Mood</span><strong id="mood">Positive</strong>
             </div>
@@ -186,6 +189,10 @@
             </div>
             <progress id="attention" max="100" value="100">100%</progress>
             <p id="effect" role="status">Ready for a conversation.</p>
+            <p id="attention-breakdown">
+              Alert delivery: −0 points · Opening messages: −0 points ·
+              Reconnecting: +0 points
+            </p>
             <button id="reconnect" class="text-button">
               Take a moment to reconnect (+10%)
             </button>
@@ -225,9 +232,7 @@
           </div>
           <div class="queue">
             <details id="queue-details">
-              <summary>
-                Waiting for later <span id="queue-count">0</span>
-              </summary>
+              <summary>Held for later <span id="queue-count">0</span></summary>
               <p>
                 These updates stay quiet while Focus is on. They are BLOCKED
                 from interrupting, not deleted. You can open one deliberately or
@@ -240,6 +245,35 @@
           </div>
         </aside>
       </div>
+      <section class="comparison" aria-labelledby="comparison-title">
+        <span class="eyebrow">SAME MESSAGES. TWO SETTINGS.</span>
+        <h2 id="comparison-title">What changes with Focus?</h2>
+        <p>
+          Compare TikTok, Mom, Instagram, and an emergency in that order. Both
+          runs start at 100% attention and use your current contact and category
+          choices. No messages are opened.
+        </p>
+        <button id="compare" class="primary">Compare Focus off and on</button>
+        <p id="comparison-status" role="status">
+          This separate comparison will not change your live conversation.
+        </p>
+        <div id="comparison-results" class="comparison-results" hidden></div>
+      </section>
+      <section class="reflection" aria-labelledby="reflection-title">
+        <span class="eyebrow">TAKE ONE IDEA INTO YOUR NEXT CONVERSATION</span>
+        <h2 id="reflection-title">Which notifications would you let wait?</h2>
+        <label for="reflection-note">One choice I want to try</label>
+        <textarea
+          id="reflection-note"
+          rows="3"
+          maxlength="600"
+          placeholder="During my next conversation, I will let…"
+        ></textarea>
+        <small
+          >Your reflection stays in this tab only. Reload or Reset demo clears
+          it. You can copy it into your own notes.</small
+        >
+      </section>
       <footer>
         <button id="about-prototype" class="text-button">
           How is this different from Do Not Disturb?

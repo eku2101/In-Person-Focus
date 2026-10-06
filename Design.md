@@ -80,3 +80,18 @@ The interface uses [Figma's California beaches palette](https://www.figma.com/re
 A brief introduction on every page load distinguishes this simulation from Apple's real notification controls. Apple Focus already supports selected people and apps; the prototype's distinguishing purpose is to visualize assumed conversation effects. The comparison references [Apple's Focus guide](https://support.apple.com/guide/iphone/allow-or-silence-notifications-for-a-focus-iph21d43af5b/ios).
 
 The introduction appears before interacting with the prototype on every page load, including return visits. The Explore button dismisses it for the current visit, and the footer button reopens it anytime. No localStorage preference is read or written.
+
+## Approved refinements — October 6, 2026
+
+The creator reviewed six proposed improvements and authorized their implementation:
+
+1. Compare the same notifications with Focus off and on.
+2. Place test controls, attention, mood, and notification results together, with the conversation indicator staying visible while scrolling the results when screen height permits.
+3. Explain blocking as holding a message for later.
+4. Distinguish the cost of an arriving alert from deliberately opening it.
+5. End with one reflection question about a future conversation.
+6. Keep profile pictures optional and secondary.
+
+The comparison is a separate, repeatable demonstration using the current settings. It does not change the live experiment. Two lists show each message's outcome, reason, attention cost, and resulting score, followed by the final mood. A notice asks users to rerun after settings change. The same filtering and mood functions power both the comparison and the live experiment.
+
+The reflection is deliberately brief and local: “Which notifications would you let wait?” It invites an intention, not a claim that a habit has changed. The app remains HTML, CSS, and vanilla JavaScript with no external services or saved personal responses.

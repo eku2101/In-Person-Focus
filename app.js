@@ -50,6 +50,16 @@ let delivered = [],
   delayed = [];
 const photos = new Map(),
   photoVersions = new Map();
+// Record actual score changes, including clamping at 0 and 100.
+let attentionChanges = { delivery: 0, opening: 0, recovery: 0 };
+const comparisonSequence = ["tiktok", "mom", "instagram", "emergency"];
+
+function moodFor(score) {
+  return score >= 80 ? "Positive" : score >= 50 ? "Distracted" : "Disconnected";
+}
+function interruptionCost(message) {
+  return message.category === "low" ? 15 : 5;
+}
 // Filtering has no side effects. Emergency priority always wins.
 function decision(message, focus, contacts, blocked = blockedTypes) {
   if (message.category === "emergency")
@@ -70,14 +80,11 @@ function decision(message, focus, contacts, blocked = blockedTypes) {
   };
 }
 // Illustrative mood thresholds: edit these to explore other assumptions.
-function changeAttention(amount, explanation) {
+function changeAttention(amount, explanation, source) {
+  const before = attention;
   attention = Math.max(0, Math.min(100, attention + amount));
-  conversationMood =
-    attention >= 80
-      ? "Positive"
-      : attention >= 50
-        ? "Distracted"
-        : "Disconnected";
+  if (source) attentionChanges[source] += Math.abs(attention - before);
+  conversationMood = moodFor(attention);
   $("effect").textContent = explanation;
 }
 function avatar(element, sender) {
@@ -95,6 +102,7 @@ function interact(message, action) {
     changeAttention(
       -5,
       `You opened ${message.sender}'s message. Attention −5 points.`,
+      "opening",
     );
     $("feedback").textContent =
       `${message.sender}: opened in the demo. No reply was sent.`;
@@ -134,7 +142,10 @@ function renderMessages(container, items, empty) {
       top.append(picture, sender, time);
       const outcome = document.createElement("span");
       outcome.className = `outcome ${message.outcome.toLowerCase()}`;
-      outcome.textContent = message.outcome;
+      outcome.textContent =
+        message.outcome === "BLOCKED"
+          ? "BLOCKED · Held for later"
+          : message.outcome;
       const body = document.createElement("p");
       body.textContent = message.text;
       const reason = document.createElement("small");
@@ -143,7 +154,7 @@ function renderMessages(container, items, empty) {
       actions.className = "notification-actions";
       const open = document.createElement("button");
       open.className = "text-button";
-      open.textContent = message.opened ? "Opened" : "Open (−5%)";
+      open.textContent = message.opened ? "Opened" : "Open (up to −5 points)";
       open.disabled = !!message.opened;
       open.setAttribute("aria-label", `Open message from ${message.sender}`);
       open.addEventListener("click", () => interact(message, "open"));
@@ -185,6 +196,8 @@ function render() {
   $("attention").textContent = `${attention}%`;
   $("attention-value").textContent = `${attention}%`;
   $("mood").textContent = conversationMood;
+  $("attention-breakdown").textContent =
+    `Alert delivery: −${attentionChanges.delivery} points · Opening messages: −${attentionChanges.opening} points · Reconnecting: +${attentionChanges.recovery} points`;
   $("reconnect").disabled = attention === 100;
   document
     .querySelectorAll("[data-avatar]")
@@ -216,6 +229,7 @@ $("focus-toggle").addEventListener("click", () => {
       changeAttention(
         -5,
         "Waiting notifications released as one batch. Attention −5 points.",
+        "delivery",
       );
     $("feedback").textContent =
       `Focus is off. ${count} waiting notifications released${count ? " as one interruption" : ""}.`;
@@ -230,6 +244,7 @@ document.querySelectorAll("#contact-settings input").forEach((input) =>
     else selected.delete(input.value);
     $("feedback").textContent =
       `${input.value}: ${input.checked ? "allowed" : "blocked"} for new messages.`;
+    markComparisonStale();
     render();
   }),
 );
@@ -239,6 +254,7 @@ document.querySelectorAll("#category-settings input").forEach((input) =>
     else blockedTypes.delete(input.value);
     $("feedback").textContent =
       `${messages[input.value].sender}: ${input.checked ? "blocked" : "allowed"} for new notifications.`;
+    markComparisonStale();
     render();
   }),
 );
@@ -257,16 +273,17 @@ $("send").addEventListener("click", () => {
   };
   if (result.allow) {
     delivered.push(item);
-    const cost = message.category === "low" ? 15 : 5;
+    const cost = interruptionCost(message);
     changeAttention(
       -cost,
       `${message.sender} interrupted. Attention −${cost} points.`,
+      "delivery",
     );
   } else {
     delayed.push(item);
     changeAttention(
       0,
-      `${message.sender} was blocked. Attention and mood preserved.`,
+      `${message.sender} is held for later. No interruption; attention and mood preserved.`,
     );
   }
   $("feedback").textContent =
@@ -277,6 +294,7 @@ $("reconnect").addEventListener("click", () => {
   changeAttention(
     10,
     "You returned your attention to the conversation. Up to 10 points restored.",
+    "recovery",
   );
   render();
 });
@@ -349,6 +367,12 @@ $("reset").addEventListener("click", () => {
     input.checked = true;
   });
   attention = 100;
+  attentionChanges = { delivery: 0, opening: 0, recovery: 0 };
+  $("reflection-note").value = "";
+  $("comparison-results").replaceChildren();
+  $("comparison-results").hidden = true;
+  $("comparison-status").textContent =
+    "This separate comparison will not change your live conversation.";
   changeAttention(0, "Ready for a conversation.");
   $("message-type").value = "mom";
   $("queue-details").open = false;
@@ -358,6 +382,55 @@ $("reset").addEventListener("click", () => {
   render();
 });
 render();
+
+// Compare the same arrivals using the same rules, without mutating the live demo.
+function simulateSequence(focus, contacts, blocked) {
+  let score = 100;
+  const rows = comparisonSequence.map((type) => {
+    const message = { ...messages[type], type };
+    const result = decision(message, focus, contacts, blocked);
+    const cost = result.allow ? interruptionCost(message) : 0;
+    score = Math.max(0, score - cost);
+    return {
+      sender: message.sender,
+      allowed: result.allow,
+      reason: result.reason,
+      cost,
+      score,
+    };
+  });
+  return { rows, score, mood: moodFor(score) };
+}
+function markComparisonStale() {
+  if (!$("comparison-results").hidden) {
+    $("comparison-status").textContent =
+      "Settings changed. Compare again to update the results below.";
+  }
+}
+$("compare").addEventListener("click", () => {
+  const container = $("comparison-results");
+  container.replaceChildren();
+  for (const focus of [false, true]) {
+    const run = simulateSequence(focus, selected, blockedTypes);
+    const card = document.createElement("article");
+    const heading = document.createElement("h3");
+    heading.textContent = focus ? "Focus on" : "Focus off";
+    const result = document.createElement("p");
+    result.className = "comparison-score";
+    result.textContent = `${run.score}% attention · ${run.mood}`;
+    const list = document.createElement("ol");
+    for (const row of run.rows) {
+      const item = document.createElement("li");
+      item.textContent = `${row.sender}: ${row.allowed ? "ALLOWED" : "BLOCKED · Held for later"} — ${row.reason}. −${row.cost} points → ${row.score}%.`;
+      list.append(item);
+    }
+    card.append(heading, result, list);
+    container.append(card);
+  }
+  container.hidden = false;
+  $("comparison-status").textContent =
+    `Compared using contacts: ${[...selected].join(", ") || "none"}; blocked categories: ${[...blockedTypes].map((type) => messages[type].sender).join(", ") || "none"}. These outcomes follow the programmed model, not measurements of people.`;
+});
 
 // Show the explanation on every page load, before interacting with the demo.
 function showWelcome() {
