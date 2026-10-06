@@ -1,5 +1,9 @@
 # In-Person Focus
 
+**[Open the live In-Person Focus app](https://eku2101.github.io/In-Person-Focus/)**
+
+Use this link on your computer or phone, or share it with your professor. No installation is required.
+
 A self-contained conceptual prototype exploring whether selective notification filtering can help people stay present in a conversation while allowing important communication through. It does not recreate or control Apple's Focus system.
 
 ## Project guide
